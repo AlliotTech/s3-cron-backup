@@ -1,0 +1,30 @@
+services:
+  vaultwarden-backup:
+    image: ghcr.io/alliottech/s3-cron-backup:latest
+    restart: unless-stopped
+    environment:
+      CRON_SCHEDULE: "0 2 * * *"
+      TZ: Asia/Shanghai
+
+      BACKUP_NAME: vaultwarden
+      TARGET: /data
+      SQLITE_DB_PATH: db.sqlite3
+      WORK_DIR: /work
+
+      S3_BUCKET_URL: s3://${R2_BUCKET:?set R2_BUCKET}/vaultwarden
+      S3_ENDPOINT: https://${R2_ACCOUNT_ID:?set R2_ACCOUNT_ID}.r2.cloudflarestorage.com
+      AWS_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:?set R2_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:?set R2_SECRET_ACCESS_KEY}
+    volumes:
+      - ./vw-data:/data:ro
+      - backup-work:/work
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  backup-work:
