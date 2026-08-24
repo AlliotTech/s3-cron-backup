@@ -23,6 +23,10 @@ services:
       - /tmp:rw,noexec,nosuid,nodev,size=64m
     cap_drop:
       - ALL
+    cap_add:
+      # BusyBox crond switches to the crontab owner's uid/gid before each job.
+      - SETGID
+      - SETUID
     security_opt:
       - no-new-privileges:true
 

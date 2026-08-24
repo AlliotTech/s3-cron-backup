@@ -39,6 +39,8 @@ docker compose -f compose.example.yml up -d
 
 示例每天在 `Asia/Shanghai` 02:00 执行，Vaultwarden 数据目录只读挂载到
 `/data`，临时快照和压缩包写入 `/work`。成功上传后，本地压缩包会自动删除。
+示例在丢弃其他 Linux capabilities 的同时保留 `SETUID` 和 `SETGID`；BusyBox
+`crond` 启动作业时需要这两项能力，请勿删除。
 
 对象名称类似：
 
